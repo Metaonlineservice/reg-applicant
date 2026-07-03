@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم هوشمند دیتابیس و صدور سند راجستر - میتا آنلاین</title>
+    <!-- فراخوانی پکیج آیکون‌ها -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+        }
+        
+        body {
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* استایل پنل مدیریت شماره‌ها */
+        .control-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .panel-title {
+            color: #0d2346;
+            margin-top: 0;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 15px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #0d2346;
+        }
+
+        button {
+            background-color: #c59b27;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #a47e1e;
+        }
+
+        .search-hint {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: -5px;
+            margin-bottom: 15px;
+        }
+
+        .numbers-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .number-item {
+            background: white;
+            padding: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+            direction: ltr;
+        }
+
+        .number-item:hover, .number-item.active {
+            background: #0d2346;
+            color: white;
+            border-color: #0d2346;
+        }
+
+        /* قالب برگه رسمی A4 */
+        .document-wrapper {
+            background: white;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            min-height: 1000px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+            padding: 40px;
+            position: relative;
+            border: 1px solid #cbd5e1;
+        }
+
+        .document-inner {
+            background: rgba(255, 255, 255, 0.98);
+            border: 2px solid #0d2346;
+            padding: 30px;
+            height: 100%;
+            min-height: 920px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        /* هدر برگه */
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px double #c59b27;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .company-logo {
+            width: 85px;
+            height: 85px;
+            object-fit: contain;
+        }
+
+        .company-title h1 {
+            margin: 0;
+            font-size: 22px;
+            color: #0d2346;
+            font-weight: 700;
+        }
+
+        .company-title p {
+            margin: 5px 0 0 0;
+            font-size: 12px;
+            color: #c59b27;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .contact-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            width: 100%;
+        }
+
+        .contact-icon {
+            width: 24px;
+            color: #0d2346;
+            font-size: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .contact-separator {
+            margin: 0 6px;
+            color: #475569;
+            font-weight: bold;
+        }
+
+        .contact-value {
+            color: #475569;
+            font-size: 13px;
+        }
+
+        /* بدنه سند */
+        .doc-body {
+            flex-grow: 1;
+        }
+
+        .doc-title {
+            text-align: center;
+            margin: 20px 0 40px 0;
+        }
+
+        .doc-title h2 {
+            display: inline-block;
+            border-bottom: 2px solid #0d2346;
+            padding-bottom: 5px;
+            color: #0d2346;
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 35px;
+        }
+
+        .info-table th, .info-table td {
+            border: 1px solid #cbd5e1;
+            padding: 12px 15px;
+            text-align: right;
+        }
+
+        .info-table th {
+            background-color: #f8fafc;
+            color: #0d2346;
+            width: 25%;
+            font-weight: bold;
+        }
+
+        .reg-number-value {
+            font-family: monospace, Tahoma;
+            font-size: 16px;
+            font-weight: bold;
+            color: #c59b27;
+            letter-spacing: 1px;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .phone-value {
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .message-box {
+            background-color: #f8fafc;
+            border-right: 5px solid #c59b27;
+            padding: 20px;
+            border-radius: 4px;
+            line-height: 1.8;
+            text-align: justify;
+            font-size: 14px;
+            color: #1e293b;
+            margin-bottom: 40px;
+        }
+
+        /* بخش امضا و مهر */
+        .doc-footer-signs {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-top: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 25px;
+            margin-bottom: 15px;
+        }
+
+        .signature-block {
+            text-align: center;
+            width: 250px;
+            position: relative;
+        }
+
+        .signature-title {
+            font-weight: bold;
+            color: #0d2346;
+            font-size: 14px;
+            margin-bottom: 60px;
+        }
+
+        .signature-name {
+            font-size: 14px;
+            color: #334155;
+            font-weight: bold;
+        }
+
+        .seal-container {
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            width: 110px;
+            height: 110px;
+            opacity: 0.85;
+            pointer-events: none;
+        }
+
+        .doc-main-footer {
+            text-align: center;
+            font-size: 13px;
+            color: #475569;
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            line-height: 1.5;
+        }
+
+        .doc-main-footer i {
+            color: #c59b27;
+            margin-left: 6px;
+        }
+
+        .print-btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* لودینگ متحرک و شفاف روی کل صفحه */
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+
+        .loading-text {
+            font-weight: bold;
+            color: #0d2346;
+            font-size: 15px;
+        }
+
+        /* ساختار پنجره پاپ آپ اختصاصی و شیک خطا */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            display: none;
+        }
+
+        .error-modal {
+            background: white;
+            width: 90%;
+            max-width: 420px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            padding: 30px;
+            text-align: center;
+            animation: modalSlide 0.3s ease-out;
+            border-top: 6px solid #ef4444;
+        }
+
+        @keyframes modalSlide {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-icon {
+            width: 60px;
+            height: 60px;
+            background: #fee2e2;
+            color: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            margin: 0 auto 20px auto;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .modal-desc {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .modal-btn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .modal-btn:hover {
+            background-color: #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .document-wrapper { padding: 15px; }
+            .document-inner { padding: 15px; min-height: auto; }
+            .doc-header { flex-direction: column; text-align: center; gap: 15px; }
+            .header-left { align-items: center; justify-content: center; width: 100%; }
+            .contact-row { justify-content: center; }
+            .doc-footer-signs { flex-direction: column; align-items: center; gap: 40px; }
+        }
+
+        @media print {
+            .control-panel, .print-btn-container, .loading-overlay, .modal-overlay { display: none; }
+            body { background: white; padding: 0; }
+            .document-wrapper { box-shadow: none; border: none; padding: 0; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- بخش اول: انیمیشن لودینگ آنلاین -->
+<div class="loading-overlay" id="loadingOverlay">
+    <img src="https://i.gifer.com/ZZ5H.gif" alt="Loading" class="loading-spinner">
+    <div class="loading-text">در حال اتصال به پایگاه داده و پردازش اطلاعات...</div>
+</div>
+
+<!-- بخش دوم: پنجره پاپ آپ خطای شیک سفارشی -->
+<div class="modal-overlay" id="errorModal">
+    <div class="error-modal">
+        <div class="modal-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <div class="modal-title" id="modalTitle">خطای سیستم</div>
+        <div class="modal-desc" id="modalDesc">متاسفانه این شماره قبلاً در سیستم ثبت شده است.</div>
+        <button class="modal-btn" onclick="closeErrorModal()">متوجه شدم</button>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- پنل بالایی مدیریت شماره ها، جستجو و صدور آنی -->
+    <div class="control-panel">
+        <h3 class="panel-title">پنل آنلاین مدیریت، جستجو و صدور سند راجستر (متصل به گوگل‌شیت)</h3>
+        
+        <div class="form-group">
+            <input type="text" id="phoneNumberInput" oninput="handleSearch(this.value)" placeholder="شماره تلفن را جهت جستجو یا ثبت جدید وارد کنید...">
+            <button onclick="addNewNumber()">ثبت شماره جدید در دیتابیس</button>
+        </div>
+        <div class="search-hint">نکته: با تایپ کردن شماره، سیستم به صورت آنلاین در گوگل شیت جستجو کرده و در صورت وجود، سند آن را فعال می‌کند.</div>
+
+        <p style="font-size: 13px; margin-bottom: 5px; font-weight: bold; color: #475569;">لیست شماره‌های هماهنگ شده با گوگل شیت:</p>
+        <div class="numbers-list" id="numbersContainer">
+            <!-- شماره ها لود می‌شوند -->
+        </div>
+    </div>
+
+    <!-- قالب برگه رسمی A4 قابل چاپ -->
+    <div class="document-wrapper">
+        <div class="document-inner">
+            
+            <!-- هدر سند رسمی -->
+            <div class="doc-header">
+                <div class="header-right">
+                    <img src="RegistrationLogo.png" alt="Logo" class="company-logo" onerror="this.style.display='none';">
+                    <div class="company-title">
+                        <h1>میتا آنلاین سرویس</h1>
+                        <p>META ONLINE SERVICES</p>
+                    </div>
+                </div>
+                
+                <div class="header-left">
+                    <div class="contact-row">
+                        <span class="contact-value" style="direction: ltr;">+93730556547</span>
+                        <span class="contact-separator">:</span>
+                        <span class="contact-icon"><i class="fa-solid fa-phone"></i></span>
+                    </div>
+                    <div class="contact-row">
+                        <span class="contact-value" style="direction: ltr;">+93730556547</span>
+                        <span class="contact-separator">:</span>
+                        <span class="contact-icon"><i class="fa-brands fa-whatsapp"></i></span>
+                    </div>
+                    <div class="contact-row">
+                        <span class="contact-value">metaonlineservice3@gmail.com</span>
+                        <span class="contact-separator">:</span>
+                        <span class="contact-icon"><i class="fa-solid fa-envelope"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بدنه اطلاعات سند -->
+            <div class="doc-body">
+                <div class="doc-title">
+                    <h2>سند رسمی ثبت و راجستر مشتری</h2>
+                </div>
+
+                <table class="info-table">
+                    <tr>
+                        <th>شماره تماس مشتری:</th>
+                        <td><span class="phone-value" id="docPhone">-</span></td>
+                    </tr>
+                    <tr>
+                        <th>نمبر ثبت راجستر (خودکار):</th>
+                        <td><span class="reg-number-value" id="docRegId">-</span></td>
+                    </tr>
+                    <tr>
+                        <th>تاریخ صدور سند:</th>
+                        <td id="docDate">۱۴۰۵/۰۴/۱۳</td>
+                    </tr>
+                </table>
+
+                <div class="message-box">
+                    <strong>متقاضی عزیز؛</strong> شما به طور خودکار ثبت سایت و سرویس میتا آنلاین شدید. لطفاً نموده در صورت رضایت از خدمات ما و هنگام مراجعه حضوری به دفتر مرکزی میتا آنلاین، لطف نموده این سند را در گوشی با خود داشته باشید و یا نمبر راجستر خود را به تیم کاری میتا آنلاین بیان نمایید تا به صورت درست و منظم نزد میتا آنلاین سرویس، پنل شما فعال و قابل استفاده باشد. در صورت عدم رعایت این قوانین، در روش پیگیری پرونده به اخلال تخنیکی مواجه خواهید شد. لطفاً از این قوانین رعایت نمایید.
+                </div>
+            </div>
+
+            <!-- بخش امضا و مهر -->
+            <div class="doc-footer-signs">
+                <div style="font-size: 11px; color: #64748b;">* این سند به صورت سیستمی صادر شده و معتبر است.</div>
+                
+                <div class="signature-block">
+                    <div class="signature-title">امضاء و مهر مسئول خدمات میتا آنلاین</div>
+                    
+                    <div class="seal-container">
+                        <svg viewBox="0 0 100 100" width="100%" height="100%">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#0d2346" stroke-width="2" stroke-dasharray="2,2"/>
+                            <circle cx="50" cy="50" r="41" fill="none" stroke="#0d2346" stroke-width="1.5"/>
+                            <circle cx="50" cy="50" r="32" fill="none" stroke="#c59b27" stroke-width="1" stroke-dasharray="4,1"/>
+                            <path id="sealTextPath" d="M 15,50 A 35,35 0 1,1 85,50" fill="none"/>
+                            <text font-size="7" fill="#0d2346" font-weight="bold">
+                                <textPath href="#sealTextPath" startOffset="50%" text-anchor="middle">META ONLINE SERVICES</textPath>
+                            </text>
+                            <text x="50" y="48" font-size="7" fill="#c59b27" font-weight="bold" text-anchor="middle">مهر رسمی</text>
+                            <text x="50" y="58" font-size="6" fill="#0d2346" font-weight="bold" text-anchor="middle">ثبت شد</text>
+                            <path d="M 30,65 Q 45,35 55,60 T 75,50" fill="none" stroke="#c59b27" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                    <div class="signature-name">مطیع الله سلطانی</div>
+                </div>
+            </div>
+
+            <div class="doc-main-footer">
+                <i class="fa-solid fa-location-dot"></i>
+                <strong>آدرس دفتر مرکزی:</strong> کوته سنگی، گولایی دواخانه، مارکیت سبزوار، منزل دوم، دفتر شماره ۱۴
+            </div>
+
+        </div>
+    </div>
+
+    <div class="print-btn-container">
+        <button onclick="window.print()" style="background-color: #0d2346; padding: 12px 30px; font-size: 15px;">چاپ و ذخیره سند (PDF / A4)</button>
+    </div>
+
+</div>
+
+<script>
+    // لود شدن دیتابیس مستقیم از گوگل شیت
+    // ⚠️ لینک اختصاصی Web App خود را که از گوگل اسکریپت کپی کرده‌اید دقیقاً جایگزین آدرس زیر کنید:
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpIT0uZPXyQ7WZgg1oMZ5TsFIBQ_cSakCuZbd8nPLYIHOx58NdCjfZonNK4r_eh19S/exec";
+
+    let initialNumbers = [];
+    let currentSelectedPhone = "";
+
+    function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+    function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+    
+    function showCustomError(title, desc) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalDesc').innerText = desc;
+        document.getElementById('errorModal').style.display = 'flex';
+    }
+    function closeErrorModal() { document.getElementById('errorModal').style.display = 'none'; }
+
+    function setPersianDate() {
+        document.getElementById('docDate').innerText = "۱۴۰۵/۰۴/۱۳";
+    }
+
+    function getCleanNumber(str) {
+        return str.replace(/\D/g, '');
+    }
+
+    function generateRegisterID(phoneStr) {
+        const cleanDigits = getCleanNumber(phoneStr);
+        const last5 = cleanDigits.slice(-5).padStart(5, '0');
+        return `M-AUS ${last5}`;
+    }
+
+    // دریافت آنلاین کل بانک شماره‌ها از گوگل شیت در بدو ورود به صفحه
+    function fetchNumbersFromSheet() {
+        showLoading();
+        fetch(SCRIPT_URL)
+        .then(response => response.json())
+        .then(data => {
+            // تبدیل ساختار دیتابیس شیت به آرایه صفحه
+            initialNumbers = data.map(item => item.phoneNumber);
+            loadNumbersList();
+            if(initialNumbers.length > 0) {
+                selectNumber(initialNumbers[0]);
+            }
+            hideLoading();
+        })
+        .catch(error => {
+            hideLoading();
+            showCustomError("خطای اتصال سیستم", "امکان اتصال آنلاین به دیتابیس گوگل شیت فراهم نشد. لطفاً لینک وب اپلیکیشن اسکریپت خود را بررسی کنید.");
+        });
+    }
+
+    function loadNumbersList(filterText = "") {
+        const container = document.getElementById('numbersContainer');
+        container.innerHTML = '';
+        
+        let hasExactMatch = false;
+        let matchPhone = "";
+
+        initialNumbers.forEach(num => {
+            const cleanNum = getCleanNumber(num);
+            const cleanFilter = getCleanNumber(filterText);
+            
+            if (filterText === "" || cleanNum.includes(cleanFilter) || num.includes(filterText)) {
+                const div = document.createElement('div');
+                div.className = 'number-item';
+                if (num === currentSelectedPhone) div.classList.add('active');
+                div.innerText = num;
+                div.onclick = function() { selectNumber(num); };
+                container.appendChild(div);
+
+                if (cleanFilter !== "" && cleanNum === cleanFilter) {
+                    hasExactMatch = true;
+                    matchPhone = num;
+                }
+            }
+        });
+
+        // سیستم جستجوی آنی: به محض تایپ و تطابق کامل شماره، سند صادر و نمایش داده می‌شود
+        if (hasExactMatch && currentSelectedPhone !== matchPhone) {
+            selectNumber(matchPhone);
+        }
+    }
+
+    function selectNumber(phone) {
+        currentSelectedPhone = phone;
+        document.getElementById('docPhone').innerText = phone;
+        document.getElementById('docRegId').innerText = generateRegisterID(phone);
+        
+        const items = document.querySelectorAll('.number-item');
+        items.forEach(item => {
+            if (item.innerText === phone) item.classList.add('active');
+            else item.classList.remove('active');
+        });
+    }
+
+    function handleSearch(val) {
+        loadNumbersList(val.trim());
+    }
+
+    // ارسال امن و ذخیره‌سازی شماره جدید در دیتابیس آنلاین گوگل‌شیت
+    function addNewNumber() {
+        const input = document.getElementById('phoneNumberInput');
+        const val = input.value.trim();
+        
+        if(!val) {
+            showCustomError("فیلد خالی", "لطفاً یک شماره تلفن معتبر جهت ثبت وارد کنید.");
+            return;
+        }
+
+        const cleanNew = getCleanNumber(val);
+        const isDuplicate = initialNumbers.some(num => getCleanNumber(num) === cleanNew);
+
+        if (isDuplicate) {
+            // فراخوانی پنجره پاپ آپ شیک خطا در صورت تکراری بودن شماره
+            showCustomError("خطای ثبت شماره تکراری", "این خط قبلاً در سیستم ثبت شده است! سند معتبر این شماره هم اکنون برای شما نمایش داده شد.");
+            const existingNumber = initialNumbers.find(num => getCleanNumber(num) === cleanNew);
+            selectNumber(existingNumber);
+            loadNumbersList(val);
+        } else {
+            showLoading();
+            const regId = generateRegisterID(val);
+            const todayDate = "۱۴۰۵/۰۴/۱۳";
+
+            // ارسال درخواست POST به گوگل شیت
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors", // جهت دور زدن محدودیت‌های امنیتی مرورگر
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ phoneNumber: val, registrationID: regId, date: todayDate })
+            })
+            .then(() => {
+                // آپدیت همزمان لوکال پس از ارسال موفقیت آمیز
+                initialNumbers.unshift(val);
+                currentSelectedPhone = val;
+                loadNumbersList('');
+                selectNumber(val);
+                input.value = '';
+                hideLoading();
+            })
+            .catch(err => {
+                hideLoading();
+                showCustomError("خطای سرور", "خطایی در ذخیره‌سازی اطلاعات روی شیت به وجود آمد.");
+            });
+        }
+    }
+
+    window.onload = function() {
+        setPersianDate();
+        fetchNumbersFromSheet();
+    };
+</script>
+
+</body>
+</html>
