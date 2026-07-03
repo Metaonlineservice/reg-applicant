@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سیستم ثبت و صدور سند راجستر مشتریان - میتا آنلاین</title>
+    <title>سیستم ثبت و صدور سند راجستر متقاضیان - میتا آنلاین</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&display=swap');
@@ -35,20 +35,22 @@
         .number-item:hover .reg-badge, .number-item.active .reg-badge { background: rgba(255, 255, 255, 0.2); color: white; }
 
         /* سند برگه رسمی A4 */
-        .document-wrapper { background: white; flex: 1; max-width: 800px; min-height: 1000px; box-shadow: 0 4px 25px rgba(0,0,0,0.1); padding: 40px; position: relative; border: 1px solid #cbd5e1; width: 100%; }
-        .document-inner { background: rgba(255, 255, 255, 0.98); border: 2px solid #0d2346; padding: 30px; height: 100%; min-height: 920px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .document-wrapper { background: white; flex: 1; width: 794px; max-width: 794px; min-height: 1123px; height: 1123px; box-shadow: 0 4px 25px rgba(0,0,0,0.1); padding: 40px; position: relative; border: 1px solid #cbd5e1; flex-shrink: 0; }
+        .document-inner { background: rgba(255, 255, 255, 0.98); border: 2px solid #0d2346; padding: 30px; height: 100%; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
         
-        .doc-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px double #c59b27; padding-bottom: 20px; margin-bottom: 30px; gap: 15px; }
-        .header-right { display: flex; align-items: center; gap: 15px; }
+        /* چیدمان هدر: راست اسم و لوگو / چپ اطلاعات تماس */
+        .doc-header { display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; border-bottom: 3px double #c59b27; padding-bottom: 20px; margin-bottom: 30px; gap: 15px; direction: rtl !important; }
+        .header-right { display: flex !important; flex-direction: row !important; align-items: center !important; gap: 15px; text-align: right; }
         .company-logo { width: 85px; height: 85px; object-fit: contain; }
         .company-title h1 { margin: 0; font-size: 22px; color: #0d2346; font-weight: 700; }
         .company-title p { margin: 5px 0 0 0; font-size: 12px; color: #c59b27; font-weight: bold; }
         
-        .header-left { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
-        .contact-row { display: flex; align-items: center; justify-content: flex-end; width: 100%; }
-        .contact-icon { width: 24px; color: #0d2346; font-size: 14px; display: flex; justify-content: center; align-items: center; }
-        .contact-separator { margin: 0 6px; color: #475569; font-weight: bold; }
-        .contact-value { color: #475569; font-size: 13px; }
+        /* ساختار دو ستونی بخش اطلاعات تماس (چپ هدر) */
+        .header-left { display: flex !important; flex-direction: column !important; gap: 8px; align-items: flex-end; direction: ltr !important; }
+        .contact-row { display: flex !important; flex-direction: row !important; align-items: center !important; gap: 10px; width: 100%; justify-content: flex-start; }
+        .contact-icon { width: 25px; min-width: 25px; color: #0d2346; font-size: 15px; display: flex; justify-content: center; align-items: center; }
+        .contact-sep { color: #0d2346; font-weight: bold; margin-right: 2px; }
+        .contact-value { color: #475569; font-size: 13px; font-family: Tahoma, sans-serif; text-align: left; white-space: nowrap; }
 
         .doc-body { flex-grow: 1; }
         .doc-title { text-align: center; margin: 20px 0 40px 0; }
@@ -87,16 +89,15 @@
 
         @keyframes scaleUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         
-        /* 📱 کدهای مدیا کوئری برای ریسپانسیو کامل دسکتاپ و موبایل */
-        @media (max-width: 992px) {
+        /* 📱 کدهای مدیا کوئری اختصاصی نمایشگر گوشی */
+        @media screen and (max-width: 1140px) {
             .main-layout { flex-direction: column; align-items: center; }
             .sidebar { width: 100%; position: static; margin-bottom: 20px; }
             .numbers-list { max-height: 250px; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
-            .document-wrapper { padding: 20px; }
+            .document-wrapper { width: 100%; max-width: 100%; height: auto; min-height: auto; padding: 20px; }
             .document-inner { padding: 15px; min-height: auto; }
-            .doc-header { flex-direction: column; text-align: center; align-items: center; }
-            .header-left { align-items: center; }
-            .contact-row { justify-content: center; }
+            .doc-header { flex-direction: column !important; text-align: center; align-items: center !important; }
+            .header-left { align-items: center !important; }
             .doc-footer-signs { flex-direction: column; align-items: center; text-align: center; gap: 30px; }
             .signature-block { width: 100%; max-width: 280px; }
             .seal-container { left: 50%; transform: translateX(-50%); }
@@ -107,7 +108,8 @@
             .control-panel, .sidebar, .print-btn-container, .loading-overlay, .error-modal { display: none !important; } 
             body { padding: 0; background: white; } 
             .main-layout { margin-top: 0; display: block; }
-            .document-wrapper { box-shadow: none; border: none; padding: 0; max-width: 100%; width: 100%; } 
+            .document-wrapper { box-shadow: none; border: none; padding: 0; max-width: 100%; width: 100%; height: auto; min-height: auto; } 
+            .doc-header { display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; }
         }
     </style>
 </head>
@@ -118,7 +120,7 @@
     <div class="control-panel">
         <h3 class="panel-title">پنل مدیریت هوشمند پایگاه داده ابری میتا آنلاین</h3>
         <div class="form-group">
-            <input type="text" id="phoneNumberInput" placeholder="شماره تلفن مشتری را وارد کنید (مثال: +93730556547)">
+            <input type="text" id="phoneNumberInput" placeholder="شماره تلفن متقاضی را وارد کنید (مثال: +93730556547)">
             <button onclick="checkAndRegisterNumber()"><i class="fa-solid fa-cloud-upload"></i> بررسی و ثبت خط</button>
         </div>
         <div class="hint-text">سیستم امنیتی فیلترینگ: شماره‌ها بر اساس ۵ رقم آخر بررسی می‌شوند تا از ثبت مکرر جلوگیری شود.</div>
@@ -136,6 +138,7 @@
         <div class="document-wrapper">
             <div class="document-inner">
                 <div class="doc-header">
+                    <!-- سمت راست: اسم شرکت و لوگو -->
                     <div class="header-right">
                         <img src="RegistrationLogo.png" alt="Logo" class="company-logo" onerror="this.style.opacity='0';">
                         <div class="company-title">
@@ -143,41 +146,42 @@
                             <p>META ONLINE SERVICES</p>
                         </div>
                     </div>
+                    <!-- سمت چپ: ستون آیکون‌ها و ستون اطلاعات تماس کاملاً تراز شده -->
                     <div class="header-left">
                         <div class="contact-row">
-                            <span class="contact-value" style="direction: ltr;">+93730556547</span>
-                            <span class="contact-separator">:</span>
                             <span class="contact-icon"><i class="fa-solid fa-phone"></i></span>
+                            <span class="contact-sep">:</span>
+                            <span class="contact-value">+93730556547</span>
                         </div>
                         <div class="contact-row">
-                            <span class="contact-value" style="direction: ltr;">+93730556547</span>
-                            <span class="contact-separator">:</span>
                             <span class="contact-icon"><i class="fa-brands fa-whatsapp"></i></span>
+                            <span class="contact-sep">:</span>
+                            <span class="contact-value">+93730556547</span>
                         </div>
                         <div class="contact-row">
-                            <span class="contact-value">metaonlineservice3@gmail.com</span>
-                            <span class="contact-separator">:</span>
                             <span class="contact-icon"><i class="fa-solid fa-envelope"></i></span>
+                            <span class="contact-sep">:</span>
+                            <span class="contact-value">metaonlineservice3@gmail.com</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="doc-body">
-                    <div class="doc-title"><h2>سند رسمی ثبت و راجستر مشتری</h2></div>
+                    <div class="doc-title"><h2>سند رسمی ثبت متقاضی ویزا بشردوستانه استرالیا</h2></div>
                     <table class="info-table">
-                        <tr><th>شماره تماس مشتری:</th><td><span class="phone-value" id="docPhone">-</span></td></tr>
-                        <tr><th>نمبر ثبت راجستر (خودکار):</th><td><span class="reg-number-value" id="docRegId">-</span></td></tr>
+                        <tr><th>شماره تماس :</th><td><span class="phone-value" id="docPhone">-</span></td></tr>
+                        <tr><th>نمبر ثبت  (خودکار):</th><td><span class="reg-number-value" id="docRegId">-</span></td></tr>
                         <tr><th>تاریخ صدور سند:</th><td id="docDate">۱۴۰۵/۰۴/۱۳</td></tr>
                     </table>
                     <div class="message-box">
-                        <strong>متقاضی عزیز؛</strong> شما به طور خودکار ثبت سایت و سرویس میتا آنلاین شدید. لطفاً نموده در صورت رضایت از خدمات ما و هنگام مراجعه حضوری به دفتر مرکزی میتا آنلاین، لطف نموده این سند را در گوشی با خود داشته باشید و یا نمبر راجستر خود را به تیم کاری میتا آنلاین بیان نمایید تا به صورت درست و منظم نزد میتا آنلاین سرویس، پنل شما فعال و قابل استفاده باشد. در صورت عدم رعایت این قوانین، در روش پیگیری پرونده به اخلال تخنیکی مواجه خواهید شد. لطفاً از این قوانین رعایت نمایید.
+<strong>متقاضی گرامی؛</strong> ثبت‌نام شما در سایت و خدمات میتا آنلاین با موفقیت انجام شده است. لطفاً هنگام مراجعه حضوری به دفتر مرکزی، این سند را در تلفن همراه خود همراه داشته باشید یا شماره ثبت (راجستر) خود را به همکاران میتا آنلاین ارائه نمایید تا پنل شما به‌درستی و بدون مشکل فعال گردد. عدم ارائه این سند یا شماره ثبت ممکن است باعث تأخیر در فعال‌سازی و پیگیری پرونده شما شود. لطفاً برای دریافت خدمات بهتر، این موارد را رعایت فرمایید. از همکاری شما سپاسگزاریم.
                     </div>
                 </div>
 
                 <div class="doc-footer-signs">
-                    <div style="font-size: 11px; color: #64748b;">* این سند به صورت سیستمی صادر شده و معتبر است.</div>
+                    <div style="font-size: 11px; color: #64748b;">* پس از ارتباط با خدمات میتا آنلاین از طریق واتساپ، درخواست شما بر اساس شماره تماس به‌صورت خودکار ثبت و این سند به‌طور سیستمی صادر می‌شود.</div>
                     <div class="signature-block">
-                        <div class="signature-title">امضاء و مهر مسئول خدمات میتا آنلاین</div>
+                        <div class="signature-title">با احترام </div>
                         <div class="seal-container">
                             <svg viewBox="0 0 100 100" width="100%" height="100%">
                                 <circle cx="50" cy="50" r="45" fill="none" stroke="#0d2346" stroke-width="2" stroke-dasharray="2,2"/>
@@ -190,7 +194,7 @@
                                 <path d="M 30,65 Q 45,35 55,60 T 75,50" fill="none" stroke="#c59b27" stroke-width="1.5" stroke-linecap="round"/>
                             </svg>
                         </div>
-                        <div class="signature-name">مطیع الله سلطانی</div>
+                       <div class="signature-name">خدمات میتا آنلاین  </div>
                     </div>
                 </div>
 
@@ -348,7 +352,7 @@
                 }
                 renderSidebar();
                 
-                showModal("خطا: شماره تکراری", "این شماره با یک پیش‌شماره یا فرمت دیگر قبلاً ثبت شده است! سند مشتری جهت چاپ فراخوانی شد.");
+                showModal("خطا: شماره تکراری", "این شماره با یک پیش‌شماره یا فرمت دیگر قبلاً ثبت شده است! سند متقاضی جهت چاپ فراخوانی شد.");
                 return;
             }
 
