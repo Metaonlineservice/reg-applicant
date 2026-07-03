@@ -179,7 +179,7 @@
                 </div>
 
                 <div class="doc-footer-signs">
-                    <div style="font-size: 11px; color: #64748b;">* پس از ارتباط با خدمات میتا آنلاین از طریق واتساپ، درخواست شما بر اساس شماره تماس به‌صورت خودکار ثبت و این سند به‌طور سیستمی صادر می‌شود.</div>
+                    <div style="font-size: 11px; color: #64748b;">* این سند به صورت سیستمی صادر شده و معتبر است.</div>
                     <div class="signature-block">
                         <div class="signature-title">با احترام </div>
                         <div class="seal-container">
@@ -385,9 +385,39 @@
         }
     }
 
+    // 📥 بخش اصلی هوشمندسازی: شناسایی لینک کلیک شده در گوگل‌شیت
     window.onload = function() {
         document.getElementById('docDate').innerText = "۱۴۰۵/۰۴/۱۳";
-        loadAllNumbersFromSheet(); 
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlPhone = urlParams.get('phone');
+        const autoPrint = urlParams.get('autoPrint');
+
+        if (urlPhone) {
+            // اگر از شیت کلیک شده باشد، مستقیم اطلاعات همان شخص را پیدا و پرینت کن
+            showLoading("در حال فراخوانی سند اختصاصی متقاضی...");
+            fetch(`${WEB_APP_URL}?action=search&phone=${encodeURIComponent(urlPhone)}`)
+                .then(res => res.json())
+                .then(result => {
+                    hideLoading();
+                    if(result.found) {
+                        displayDocument(result.phone, result.regId, result.date);
+                        if(autoPrint === "true") {
+                            // مکث کوتاه برای لود شدن کامل استایل‌ها و سپس باز شدن پنجره پرینت/PDF
+                            setTimeout(() => { window.print(); }, 800);
+                        }
+                    } else {
+                        showModal("یافت نشد", "اطلاعات مربوط به این لینک در شیت پیدا نشد.");
+                        loadAllNumbersFromSheet();
+                    }
+                }).catch(() => {
+                    hideLoading();
+                    loadAllNumbersFromSheet();
+                });
+        } else {
+            // حالت عادی سیستم (بدون فیلتر لینک)
+            loadAllNumbersFromSheet(); 
+        }
     };
 </script>
 
